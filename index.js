@@ -72,7 +72,7 @@ app.post('/webhook', async (req, res) => {
             }
         })
 
-        console.log(resp)
+        console.log(resp.data)
 
         res.status(200).send('OK');
     }
