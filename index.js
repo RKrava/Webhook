@@ -3,7 +3,8 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }))
+// app.use(bodyParser.json());
 
 app.post('/webhook', (req, res) => {
     console.log('Received Webhook:', req.body);
