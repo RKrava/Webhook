@@ -19,19 +19,19 @@ app.post('/webhook', (req, res) => {
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Месяцы начинаются с 0
     const day = String(currentDate.getDate()).padStart(2, '0');
-    const hours = String(currentDate.getHours()).padStart(2, '0');
+    const hours = String(currentDate.getHours()+3).padStart(2, '0');
     const minutes = String(currentDate.getMinutes()).padStart(2, '0');
     const seconds = String(currentDate.getSeconds()).padStart(2, '0');
 
     const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 
     const dataTotal = {
+        "buyer_comment": req?.body?.comment,
         "source_id": 3,
         "ordered_at": formattedDate,
         "buyer": {
             "full_name": req?.body?.payment?.delivery_fio,
-            "email": req?.body?.email,
-            "phone": req?.body?.phone
+            "email": req?.body?.email
         },
         "shipping": {
             "delivery_service_id": 1,
