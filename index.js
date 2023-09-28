@@ -55,7 +55,7 @@ app.post('/webhook', (req, res) => {
                 "payment_method": req?.body?.paymentsystem,
                 "amount": req?.body?.payment?.amount,
                 "payment_date": formattedDate,
-                "status": req?.body?.paymentsystem === 'cash' ? "notpaid" : "paid"
+                "status": req?.body?.paymentsystem === 'cash' ? "not_paid" : "paid"
             }
         ]
     }
