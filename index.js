@@ -11,9 +11,64 @@ app.post('/webhook', (req, res) => {
     console.log('Received Webhook:', req.body);
     console.log('Received Webhook:', req.body?.payment?.products);
     console.log('Received Webhook:', req.body?.payment?.products?.options);
-    if (req.body?.paymentsystem === 'custom.fondy') {
-        req.body.payments = {status: 'paid'}
-    }
+    // if (req.body?.paymentsystem === 'custom.fondy') {
+    //     req.body.payments = {status: 'paid'}
+    // }
+
+    const currentDate = new Date();
+
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Месяцы начинаются с 0
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const hours = String(currentDate.getHours()).padStart(2, '0');
+    const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+    const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+
+    axios.post('https://openapi.keycrm.app/v1/order', {
+        "source_id": 3,
+        "ordered_at": formattedDate,
+        "buyer": {
+            "full_name": req?.body?.payment?.delivery_fio,
+            "email": req?.body?.email,
+            "phone": req?.body?.phone
+        },
+        "shipping": {
+            "delivery_service_id": 1,
+            "shipping_service": "Нова Пошта",
+            "shipping_receive_point": req?.body?.payment?.delivery_address,
+            "recipient_full_name": req?.body?.payment?.delivery_fio,
+            "recipient_phone": req?.body?.phone,
+        },
+        "products": req.body?.payment?.products.map((item) => {
+            return {
+                "sku": item.sku,
+                "name": item.name,
+                "unit_type": "шт",
+                "price": item.price,
+                "quantity": item.quantity
+            }
+        }),
+        "payments": [
+            {
+                "payment_method_id": 1,
+                "payment_method": req?.body?.paymentsystem,
+                "amount": req?.body?.amount,
+                "payment_date": formattedDate,
+                "status": "paid"
+            }
+        ]
+    },{
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'Authorization':  'Bearer OWJhMTkyNGFlNDQ0YzQ3NjhiYjU0YzFmYzQxMGVmYmIzMzEwMTBlYQ'
+        }
+    }).then((resp) => {console.log(resp.data)})
+
     res.status(200).send('OK');
 });
 
@@ -47,53 +102,5 @@ app.listen(PORT, () => {
     //     formname: 'Cart'
     // })
     //
-    // axios.post('https://openapi.keycrm.app/v1/order', {
-    //     "source_id": 3,
-    //     "ordered_at": new Date(Date.now()).getFullYear() + '-' + new Date(Date.now()).getDay().toString().padStart(2, '0') + '-' + new Date(Date.now()).getMonth().toString().padStart(2, '0') + ' ' + new Date(Date.now()).getHours().toString().padStart(2, '0') + ':' + new Date(Date.now()).getMinutes().toString().padStart(2, '0') + ':' + new Date(Date.now()).getSeconds().toString().padStart(2, '0'),
-    //     "buyer": {
-    //         "full_name": "John Doe123",
-    //         "email": "john.doe@mail.app",
-    //         "phone": "+1 555-234-1234"
-    //     },
-    //     "shipping": {
-    //         "delivery_service_id": 1,
-    //         "shipping_service": "Нова Пошта",
-    //         "shipping_receive_point": "Склад #12",
-    //         "recipient_full_name": "Ann Doe",
-    //         "recipient_phone": "+1 555-234-7777",
-    //     },
-    //     "products": [
-    //         {
-    //             "sku": "001-242",
-    //             "price": 124.5,
-    //             "quantity": 1,
-    //             "unit_type": "шт",
-    //             "name": "Iphone XS max 256gb",
-    //             "properties": [
-    //                 {
-    //                     "name": "Color",
-    //                     "value": "Gold"
-    //                 }
-    //             ]
-    //         }
-    //     ],
-    //     "payments": [
-    //         {
-    //             "payment_method_id": 2,
-    //             "payment_method": "Apple Pay",
-    //             "amount": 123.5,
-    //             "description": "Авансовий платіж",
-    //             "payment_date": "2021-02-21 14:44:00",
-    //             "status": "paid"
-    //         }
-    //     ]
-    // },{
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //         'Accept': 'application/json',
-    //         'Cache-Control': 'no-cache',
-    //         'Pragma': 'no-cache',
-    //         'Authorization':  'Bearer OWJhMTkyNGFlNDQ0YzQ3NjhiYjU0YzFmYzQxMGVmYmIzMzEwMTBlYQ'
-    //     }
-    // }).then((resp) => {console.log(resp.data)})
+
 });
