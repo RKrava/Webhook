@@ -67,7 +67,7 @@ app.post('/webhook', (req, res) => {
             'Pragma': 'no-cache',
             'Authorization':  'Bearer OWJhMTkyNGFlNDQ0YzQ3NjhiYjU0YzFmYzQxMGVmYmIzMzEwMTBlYQ'
         }
-    }).then((resp) => {console.log(resp.data)})
+    }).then((resp) => {console.log(resp.data)}).catch((error) => {console.log(error)})
 
     res.status(200).send('OK');
 });
