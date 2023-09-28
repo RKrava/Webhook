@@ -10,6 +10,7 @@ app.use(bodyParser.json());
 app.post('/webhook', (req, res) => {
     console.log('Received Webhook:', req.body);
     console.log('Received Webhook:', req.body?.payment?.products);
+    console.log('Received Webhook:', req.body?.payment?.products?.options);
     if (req.body?.paymentsystem === 'custom.fondy') {
         req.body.payments = {status: 'paid'}
     }
