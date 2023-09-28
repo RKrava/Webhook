@@ -51,11 +51,11 @@ app.post('/webhook', (req, res) => {
         }),
         "payments": [
             {
-                "payment_method_id": 1,
+                "payment_method_id": req?.body?.paymentsystem === 'cash' ? 6 : 10,
                 "payment_method": req?.body?.paymentsystem,
                 "amount": req?.body?.payment?.amount,
                 "payment_date": formattedDate,
-                "status": "paid"
+                "status": req?.body?.paymentsystem === 'cash' ? "notpaid" : "paid"
             }
         ]
     }
