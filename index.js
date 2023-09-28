@@ -53,7 +53,7 @@ app.post('/webhook', (req, res) => {
             {
                 "payment_method_id": 1,
                 "payment_method": req?.body?.paymentsystem,
-                "amount": req?.body?.payment.amount,
+                "amount": req?.body?.payment?.amount,
                 "payment_date": formattedDate,
                 "status": "paid"
             }
@@ -69,7 +69,6 @@ app.post('/webhook', (req, res) => {
         }
     }).then((resp) => {console.log(resp.data); }).catch((error) => {console.log(error)})
 
-    console.log(dataTotal)
     res.status(200).send('OK');
 });
 
