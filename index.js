@@ -10,7 +10,6 @@ app.use(bodyParser.json());
 app.post('/webhook', (req, res) => {
     console.log('Received Webhook:', req.body);
     console.log('Received Webhook:', req.body?.payment?.products);
-    console.log('Received Webhook:', req.body?.payment?.products?.options);
     // if (req.body?.paymentsystem === 'custom.fondy') {
     //     req.body.payments = {status: 'paid'}
     // }
@@ -26,7 +25,7 @@ app.post('/webhook', (req, res) => {
 
     const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 
-    axios.post('https://openapi.keycrm.app/v1/order', {
+    const dataTotal = {
         "source_id": 3,
         "ordered_at": formattedDate,
         "buyer": {
@@ -43,23 +42,24 @@ app.post('/webhook', (req, res) => {
         },
         "products": req.body?.payment?.products.map((item) => {
             return {
-                "sku": item.sku,
-                "name": item.name,
+                "sku": item?.sku,
+                "name": item?.name,
                 "unit_type": "шт",
-                "price": item.price,
-                "quantity": item.quantity
+                "price": item?.price,
+                "quantity": item?.quantity
             }
         }),
         "payments": [
             {
                 "payment_method_id": 1,
                 "payment_method": req?.body?.paymentsystem,
-                "amount": req?.body?.amount,
+                "amount": req?.body?.payment.amount,
                 "payment_date": formattedDate,
                 "status": "paid"
             }
         ]
-    },{
+    }
+    axios.post('https://openapi.keycrm.app/v1/order', dataTotal,{
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -67,8 +67,9 @@ app.post('/webhook', (req, res) => {
             'Pragma': 'no-cache',
             'Authorization':  'Bearer OWJhMTkyNGFlNDQ0YzQ3NjhiYjU0YzFmYzQxMGVmYmIzMzEwMTBlYQ'
         }
-    }).then((resp) => {console.log(resp.data)}).catch((error) => {console.log(error)})
+    }).then((resp) => {console.log(resp.data); }).catch((error) => {console.log(error)})
 
+    console.log(dataTotal)
     res.status(200).send('OK');
 });
 
