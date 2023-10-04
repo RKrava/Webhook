@@ -13,9 +13,12 @@ app.post('/webhook', async (req, res) => {
     // if (req.body?.paymentsystem === 'custom.fondy') {
     //     req.body.payments = {status: 'paid'}
     // }
+    if (req?.body?.test === 'test') {
+        res.status(200).send('OK');
+        return
+    }
     try {
         const currentDate = new Date();
-        console.log(1)
         const year = currentDate.getFullYear();
         const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Месяцы начинаются с 0
         const day = String(currentDate.getDate()).padStart(2, '0');
@@ -25,7 +28,6 @@ app.post('/webhook', async (req, res) => {
 
         const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 
-        console.log(2)
         const dataTotal = {
             "buyer_comment": req?.body?.comment,
             "source_id": 3,
@@ -61,8 +63,7 @@ app.post('/webhook', async (req, res) => {
             ]
         }
 
-        console.log(3)
-        const resp = await axios.post('https://openapi.keycrm.app/v1/order', dataTotal, {
+        await axios.post('https://openapi.keycrm.app/v1/order', dataTotal, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
@@ -71,8 +72,6 @@ app.post('/webhook', async (req, res) => {
                 'Authorization': 'Bearer OWJhMTkyNGFlNDQ0YzQ3NjhiYjU0YzFmYzQxMGVmYmIzMzEwMTBlYQ'
             }
         })
-
-        console.log(resp.data)
 
         res.status(200).send('OK');
     }
